@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"html"
 	"log"
 	"net/http"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-}
-
 func main() {
+	initDB()
+	insertBook(Book{"toaru", "kamachi", 1, 3, []byte{1, 2}})
+
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	http.HandleFunc("/", homeHandler)
 
 	println("Starting server on port :8081")
