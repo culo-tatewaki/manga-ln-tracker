@@ -17,7 +17,7 @@ func main() {
 	mux.HandleFunc("/send", sendHandler)
 	mux.HandleFunc("/search", searchHandler)
 
-	println("Starting server on :8081...")
-	err := http.ListenAndServe(":8081", mux)
+	log.Println("Starting server on :50001...")
+	err := http.ListenAndServe(":50001", mux)
 	log.Fatal(err)
 }

@@ -6,18 +6,17 @@ function resetForm() {
 document.addEventListener("DOMContentLoaded", () => {
 
     [...document.getElementsByClassName("edit-btn")].forEach((btn) => {
-        btn.addEventListener("click", ({target}) => {
-            const card = target.parentElement.parentElement.parentElement.parentElement.parentElement
-
-            document.getElementById("form-id").value = card.getAttribute("data-id")
-            document.getElementById("form-type").value = card.querySelector(".series-type").textContent 
-            document.getElementById("form-title").value = card.querySelector(".series-title").textContent
-            document.getElementById("form-chapters").value = card.querySelector(".series-chapters").textContent
-            document.getElementById("form-volumes").value = card.querySelector(".series-volumes").textContent
-            document.getElementById("form-status").value = card.querySelector(".series-status").textContent
-            document.getElementById("form-author").value = card.querySelector(".series-author").textContent
-            document.getElementById("form-image").value = card.querySelector(".series-image").src 
-            document.getElementById("form-rating").value = card.querySelector(".series-rating").textContent
+        btn.addEventListener("click", ({currentTarget}) => {
+            document.getElementById("form-id").value = currentTarget.getAttribute("data-id")
+            document.getElementById("form-type").value = currentTarget.querySelector(".series-type").textContent 
+            document.getElementById("form-title").value = currentTarget.querySelector(".series-title").textContent
+            document.getElementById("form-chapters").value = currentTarget.querySelector(".series-chapters").textContent
+            document.getElementById("form-volumes").value = currentTarget.querySelector(".series-volumes").textContent
+            document.getElementById("form-release-date").value = currentTarget.querySelector(".series-release-date").textContent
+            document.getElementById("form-status").value = currentTarget.querySelector(".series-status").textContent
+            document.getElementById("form-author").value = currentTarget.querySelector(".series-author").textContent
+            document.getElementById("form-image").value = currentTarget.querySelector(".series-image").src 
+            document.getElementById("form-rating").value = currentTarget.querySelector(".series-rating").textContent
         })
     })
     

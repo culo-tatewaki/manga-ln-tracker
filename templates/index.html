@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
 <body class="d-flex flex-column justify-content-center align-items-center">
-    <h1>Media Tracker</h1>
+    <h1 class="mt-3">Media Tracker</h1>
 
     <div class="container d-flex flex-column gap-2 m-4">        
         <form id="search-form" action="/search" method="post" class="d-flex w-100">
@@ -62,6 +62,10 @@
                                 <label for="form-volumes" class="form-label">Volumes</label>
                                 <input type="number" class="form-control" id="form-volumes" name="volumes">
                             </div>
+                            <div>
+                                <label for="form-release-date" class="form-label">Release Date</label>
+                                <input type="number" class="form-control" id="form-release-date" name="release-date">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="form-image" class="form-label">Image</label>
@@ -89,10 +93,10 @@
 
     <ul class="d-flex justify-content-center align-items-center row row-cols-auto">
         {{ range . }}
-        <div class="card mb-3 col m-2 p-0 series-id" style="max-width: 540px;" data-id="{{ .Id }}">
+        <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;" data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="{{ .Image }}" class="rounded-start series-image" alt="{{ .Title }}">
+                    <img src="{{ .Image }}" class="rounded-start img-fluid series-image" alt="{{ .Title }}">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
@@ -101,18 +105,16 @@
                             <p>Chapters: <span class="series-chapters">{{ .Track.Chapters }}</span></p>
                             <p>Volumes: &nbsp;<span class="series-volumes">{{ .Track.Volumes }}</span></p>
                         </div>
-                        <div class="card-info mb-3">
-                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-type">{{ .Type }}</span></p>
-                            <p class="card-text">Author: <span class="series-author">{{ .Author }}</span></p>
-                            <p class="card-text">Status: &nbsp;<span class="series-status">{{ .Track.Status }}</span></p>
-                            <p class="card-text">Rating: &nbsp;<span class="series-rating">{{ .Rating }}</span></p>
+                        <div class="card-info mb-2">
+                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="series-type">{{ .Type }}</span></p>
+                            <p class="card-text">Author: &nbsp;&nbsp;&nbsp;<span class="series-author">{{ .Author }}</span></p>
+                            <p class="card-text">Status: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-status">{{ .Track.Status }}</span></p>
+                            <p class="card-text">Rating: &nbsp;&nbsp;&nbsp;<span class="series-rating">{{ .Rating }}</span></p>
+                            <p class="card-text">Release: &nbsp;<span class="series-release-date">{{ .ReleaseDate }}</span></p>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-primary edit-btn col" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
-                            <button type="button" class="btn btn-danger delete-btn col">Delete</button>
-                        </div>
+                        <p class="card-text"><small class="text-muted">Last updated {{ .Track.LastUpdate.Format "2006-01-02 15:04:05" }}</small></p>
                     </div>
-                </div>
+                </div>  
             </div>
         </div>
         {{ end }}

@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,21 +39,23 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
 	chapters, _ := strconv.Atoi(r.FormValue("chapters"))
 	volumes, _ := strconv.Atoi(r.FormValue("volumes"))
 	id, _ := strconv.Atoi(r.FormValue("id"))
+	releaseDate, _ := strconv.Atoi(r.FormValue("release-date"))
 	series := Series{
 		Id:    id,
 		Type:  r.FormValue("type"),
 		Title: r.FormValue("title"),
 		Track: Track{
-			Chapters: chapters,
-			Volumes:  volumes,
-			Status:   r.FormValue("status"),
+			Chapters:   chapters,
+			Volumes:    volumes,
+			Status:     r.FormValue("status"),
+			LastUpdate: time.Now(),
 		},
-		Author: r.FormValue("author"),
-		Image:  r.FormValue("image"),
-		Rating: r.FormValue("rating"),
+		Author:      r.FormValue("author"),
+		ReleaseDate: releaseDate,
+		Image:       r.FormValue("image"),
+		Rating:      r.FormValue("rating"),
 	}
 
-	//fmt.Println(series)
 	if series.Id == -1 {
 		insertSeries(series)
 	} else {
