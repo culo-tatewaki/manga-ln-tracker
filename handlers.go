@@ -18,7 +18,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, books)
 }
 
-func addHandler(w http.ResponseWriter, r *http.Request) {
+func sendHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -31,15 +31,25 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	volume, _ := strconv.Atoi(r.FormValue("volume"))
-	rating, _ := strconv.Atoi(r.FormValue("rating"))
-	data := Book{
+	id, _ := strconv.Atoi(r.FormValue("id"))
+	book := Book{
+		Id:     id,
+		Type:   r.FormValue("type"),
 		Series: r.FormValue("series"),
 		Volume: volume,
 		Author: r.FormValue("author"),
 		Image:  r.FormValue("image"),
-		Rating: rating,
+		Rating: r.FormValue("rating"),
 	}
 
-	fmt.Println(data)
+	if book.Id == -1 {
+		insertBook(book)
+		fmt.Println("insert")
+
+	} else {
+		fmt.Println("modify")
+		modifyBook(book)
+	}
+
 	http.Redirect(w, r, "/", http.StatusFound)
 }

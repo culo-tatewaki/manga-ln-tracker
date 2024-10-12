@@ -7,65 +7,89 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="container-fluid">
+<body class="d-flex flex-column justify-content-center align-items-center">
     <h1>List of Items</h1>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-form-modal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">
         Launch demo modal
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="add-form-modal" tabindex="-1" aria-labelledby="add-form-modal-label" aria-hidden="true">
+    <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="form-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="add-form-modal-label">Add Book</h1>
+                    <h1 class="modal-title fs-5" id="form-modal-label">Add Book</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Add Book form -->
-                    <form id="add-form" action="/add" method="post" target="/">
+                    <form id="form" action="/send" method="post" target="/">
+                        <input type="number" class="form-control d-none" id="form-id" name="id" value="-1">
                         <div class="mb-3">
-                          <label for="add-form-series" class="form-label">Series</label>
-                          <input type="text" class="form-control" id="add-form-series" name="series">
+                            <select id="form-type" class="form-select" aria-label="type" name="type">
+                                <option selected>Type</option>
+                                <option value="Light Novel">Light Novel</option>
+                                <option value="Manga">Manga</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="add-form-volume" class="form-label">Volume</label>
-                            <input type="number" class="form-control" id="add-form-volume" name="volume">
+                          <label for="form-series" class="form-label">Series</label>
+                          <input type="text" class="form-control" id="form-series" name="series">
                         </div>
                         <div class="mb-3">
-                            <label for="add-form-author" class="form-label">Author</label>
-                            <input type="text" class="form-control" id="add-form-author" name="author">
+                            <label for="form-volume" class="form-label">Volume</label>
+                            <input type="number" class="form-control" id="form-volume" name="volume">
                         </div>
                         <div class="mb-3">
-                            <label for="add-form-image" class="form-label">Image</label>
-                            <input type="text" class="form-control" id="add-form-image" name="image">
+                            <label for="form-author" class="form-label">Author</label>
+                            <input type="text" class="form-control" id="form-author" name="author">
                         </div>
                         <div class="mb-3">
-                            <select id="add-form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
+                            <label for="form-image" class="form-label">Image</label>
+                            <input type="text" class="form-control" id="form-image" name="image">
+                        </div>
+                        <div class="mb-3">
+                            <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
                                 <option value="0" selected>Rating</option>
-                                <option value="1">⭐</option>
-                                <option value="2">⭐⭐</option>
-                                <option value="3">⭐⭐⭐</option>
-                                <option value="4">⭐⭐⭐⭐</option>
-                                <option value="5">⭐⭐⭐⭐⭐</option>
+                                <option value="⭐">⭐</option>
+                                <option value="⭐⭐">⭐⭐</option>
+                                <option value="⭐⭐⭐">⭐⭐⭐</option>
+                                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="add-form" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                    <button type="submit" form="form" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <ul>
-        {{range .}}
-            <li>{{.}}</li>
-        {{end}}
+    <ul class="d-flex justify-content-center align-items-center row row-cols-auto">
+        {{ range . }}
+        <div class="card mb-3 col m-2 p-0 book-id" style="max-width: 540px;" data-id="{{ .Id }}">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ .Image }}" class="img-fluid rounded-start book-image" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title book-series">{{ .Series }}</h5>
+                        <p class="card-subtitle mb-2">Volume <span class="book-volume">{{ .Volume }}</span></p>
+                        <p class="card-text">Type: <span class="book-type">{{ .Type }}</span></p>
+                        <p class="card-text">Author: <span class="book-author">{{ .Author }}</span></p>
+                        <p class="card-text">Rating: <span class="book-rating">{{ .Rating }}</span></p>
+                        <button type="button" class="btn btn-primary stretched-link edit-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ end }}
     </ul>
 
     <script src="/static/bootstrap.bundle.min.js"></script>
