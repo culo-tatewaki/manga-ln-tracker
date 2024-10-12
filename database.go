@@ -9,11 +9,16 @@ import (
 
 var db *sql.DB
 
-type Book struct {
+type Track struct {
+	Chapters int
+	Volumes  int
+}
+
+type Series struct {
 	Id     int
 	Type   string
-	Series string
-	Volume int
+	Title  string
+	Track  Track
 	Author string
 	Image  string
 	Rating string
@@ -26,17 +31,17 @@ func initDB() {
 		log.Fatal(err)
 	}
 
-	// Create the table if it doesn't exist
 	createTable()
 }
 
 func createTable() {
 	sqlStmt := `
-    CREATE TABLE IF NOT EXISTS books (
+    CREATE TABLE IF NOT EXISTS Series (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 		type TEXT NOT NULL,
-        series TEXT NOT NULL,
-		volume INTEGER NOT NULL,
+        title TEXT NOT NULL,
+		chapters INTEGER NOT NULL,
+		volumes INTEGER NOT NULL,
         author TEXT NOT NULL,
 		image TEXT NOT NULL,
 		rating INTEGER NOT NULL
@@ -47,45 +52,45 @@ func createTable() {
 	}
 }
 
-func insertBook(book Book) {
-	stmt, err := db.Prepare("INSERT INTO books(type, series, volume, author, image, rating) VALUES(?, ?, ?, ?, ?, ?)")
+func insertSeries(series Series) {
+	stmt, err := db.Prepare("INSERT INTO Series(type, title, chapters, volumes, author, image, rating) VALUES(?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stmt.Exec(book.Type, book.Series, book.Volume, book.Author, book.Image, book.Rating)
-	if err != nil {
-		log.Fatal(err)
-	}
-	stmt.Close()
-}
-
-func modifyBook(book Book) {
-	stmt, err := db.Prepare("UPDATE books SET type = ?, series = ?, volume = ?, author = ?, image = ?, rating = ? WHERE id = ?")
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = stmt.Exec(book.Type, book.Series, book.Volume, book.Author, book.Image, book.Rating, book.Id)
+	_, err = stmt.Exec(series.Type, series.Title, series.Track.Chapters, series.Track.Volumes, series.Author, series.Image, series.Rating)
 	if err != nil {
 		log.Fatal(err)
 	}
 	stmt.Close()
 }
 
-func getAllBooks() ([]Book, error) {
-	rows, err := db.Query("SELECT id, type, series, volume, author, image, rating FROM books")
+func updateSeries(series Series) {
+	stmt, err := db.Prepare("UPDATE Series SET type = ?, title = ?, chapters = ?, volumes = ?, author = ?, image = ?, rating = ? WHERE id = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = stmt.Exec(series.Type, series.Title, series.Track.Chapters, series.Track.Volumes, series.Author, series.Image, series.Rating, series.Id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	stmt.Close()
+}
+
+func getAllSeries() ([]Series, error) {
+	rows, err := db.Query("SELECT id, type, title, chapters, volumes, author, image, rating FROM Series")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var books []Book
+	var seriesList []Series
 	for rows.Next() {
-		var book Book
-		if err := rows.Scan(&book.Id, &book.Type, &book.Series, &book.Volume, &book.Author, &book.Image, &book.Rating); err != nil {
+		var series Series
+		if err := rows.Scan(&series.Id, &series.Type, &series.Title, &series.Track.Chapters, &series.Track.Volumes, &series.Author, &series.Image, &series.Rating); err != nil {
 			return nil, err
 		}
-		books = append(books, book)
+		seriesList = append(seriesList, series)
 	}
 
-	return books, nil
+	return seriesList, nil
 }

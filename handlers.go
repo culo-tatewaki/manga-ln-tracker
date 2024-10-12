@@ -1,21 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	books, err := getAllBooks()
+	seriesList, err := getAllSeries()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	tmpl.Execute(w, books)
+	tmpl.Execute(w, seriesList)
 }
 
 func sendHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,25 +29,27 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	volume, _ := strconv.Atoi(r.FormValue("volume"))
+	chapters, _ := strconv.Atoi(r.FormValue("chapters"))
+	volumes, _ := strconv.Atoi(r.FormValue("volumes"))
 	id, _ := strconv.Atoi(r.FormValue("id"))
-	book := Book{
-		Id:     id,
-		Type:   r.FormValue("type"),
-		Series: r.FormValue("series"),
-		Volume: volume,
+	series := Series{
+		Id:    id,
+		Type:  r.FormValue("type"),
+		Title: r.FormValue("title"),
+		Track: Track{
+			Chapters: chapters,
+			Volumes:  volumes,
+		},
 		Author: r.FormValue("author"),
 		Image:  r.FormValue("image"),
 		Rating: r.FormValue("rating"),
 	}
 
-	if book.Id == -1 {
-		insertBook(book)
-		fmt.Println("insert")
-
+	// fmt.Println(series)
+	if series.Id == -1 {
+		insertSeries(series)
 	} else {
-		fmt.Println("modify")
-		modifyBook(book)
+		updateSeries(series)
 	}
 
 	http.Redirect(w, r, "/", http.StatusFound)

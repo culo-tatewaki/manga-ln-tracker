@@ -7,7 +7,6 @@ import (
 
 func main() {
 	initDB()
-	//insertBook(Book{1, "Manga", "Mayonaka Heart Tune", 6, "Igarashi Masakuni", "https://meo.comick.pictures/l6X18Y.jpg", "⭐⭐⭐⭐⭐"})
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

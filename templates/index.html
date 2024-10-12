@@ -20,11 +20,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="form-modal-label">Add Book</h1>
+                    <h1 class="modal-title fs-5" id="form-modal-label">Add Series</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Add Book form -->
+                    <!-- Add Series form -->
                     <form id="form" action="/send" method="post" target="/">
                         <input type="number" class="form-control d-none" id="form-id" name="id" value="-1">
                         <div class="mb-3">
@@ -35,12 +35,19 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                          <label for="form-series" class="form-label">Series</label>
-                          <input type="text" class="form-control" id="form-series" name="series">
+                          <label for="form-title" class="form-label">Title</label>
+                          <input type="text" class="form-control" id="form-title" name="title">
                         </div>
-                        <div class="mb-3">
-                            <label for="form-volume" class="form-label">Volume</label>
-                            <input type="number" class="form-control" id="form-volume" name="volume">
+                        <div class="mb-3 d-flex gap-2">
+                            <div>
+                                <label for="form-chapters" class="form-label">Chapters</label>
+                                <input type="number" class="form-control" id="form-chapters" name="chapters">
+                            </div>
+
+                            <div>                            
+                                <label for="form-volumes" class="form-label">Volumes</label>
+                                <input type="number" class="form-control" id="form-volumes" name="volumes">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="form-author" class="form-label">Author</label>
@@ -72,19 +79,23 @@
 
     <ul class="d-flex justify-content-center align-items-center row row-cols-auto">
         {{ range . }}
-        <div class="card mb-3 col m-2 p-0 book-id" style="max-width: 540px;" data-id="{{ .Id }}">
+        <div class="card mb-3 col m-2 p-0 series-id" style="max-width: 540px;" data-id="{{ .Id }}">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="{{ .Image }}" class="img-fluid rounded-start book-image" alt="...">
+                    <img src="{{ .Image }}" class="img-fluid rounded-start series-image" alt="...">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title book-series">{{ .Series }}</h5>
-                        <p class="card-subtitle mb-2">Volume <span class="book-volume">{{ .Volume }}</span></p>
-                        <p class="card-text">Type: <span class="book-type">{{ .Type }}</span></p>
-                        <p class="card-text">Author: <span class="book-author">{{ .Author }}</span></p>
-                        <p class="card-text">Rating: <span class="book-rating">{{ .Rating }}</span></p>
-                        <button type="button" class="btn btn-primary stretched-link edit-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
+                        <h5 class="card-title series-title">{{ .Title }}</h5>
+                        <p class="card-subtitle mb-2">Chapters <span class="series-chapters">{{ .Track.Chapters }}</span></p>
+                        <p class="card-subtitle mb-2">Volumes <span class="series-volumes">{{ .Track.Volumes }}</span></p>
+                        <p class="card-text">Type: <span class="series-type">{{ .Type }}</span></p>
+                        <p class="card-text">Author: <span class="series-author">{{ .Author }}</span></p>
+                        <p class="card-text">Rating: <span class="series-rating">{{ .Rating }}</span></p>
+                        <div>
+                            <button type="button" class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
+                            <button type="button" class="btn btn-primary delete-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
