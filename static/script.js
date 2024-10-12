@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("form-title").value = card.querySelector(".series-title").textContent
             document.getElementById("form-chapters").value = card.querySelector(".series-chapters").textContent
             document.getElementById("form-volumes").value = card.querySelector(".series-volumes").textContent
+            document.getElementById("form-status").value = card.querySelector(".series-status").textContent
             document.getElementById("form-author").value = card.querySelector(".series-author").textContent
             document.getElementById("form-image").value = card.querySelector(".series-image").src 
             document.getElementById("form-rating").value = card.querySelector(".series-rating").textContent

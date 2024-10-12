@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Go Web App</title>
-    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <title>Media Tracker</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
 <body class="d-flex flex-column justify-content-center align-items-center">
-    <h1>List of Items</h1>
+    <h1>Media Tracker</h1>
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">
-        Launch demo modal
+        Add New Series
     </button>
 
     <!-- Modal -->
@@ -38,6 +38,20 @@
                           <label for="form-title" class="form-label">Title</label>
                           <input type="text" class="form-control" id="form-title" name="title">
                         </div>
+                        <div class="mb-3">
+                            <label for="form-author" class="form-label">Author</label>
+                            <input type="text" class="form-control" id="form-author" name="author">
+                        </div>
+                        <div class="mb-3">
+                            <select id="form-status" class="form-select" aria-label="status" name="status">
+                                <option selected>Status</option>
+                                <option value="Plan to Read">Plan to Read</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Reading">Reading</option>
+                                <option value="Stalled">Stalled</option>
+                                <option value="Dropped">Dropped</option>
+                            </select>
+                        </div>
                         <div class="mb-3 d-flex gap-2">
                             <div>
                                 <label for="form-chapters" class="form-label">Chapters</label>
@@ -50,16 +64,12 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="form-author" class="form-label">Author</label>
-                            <input type="text" class="form-control" id="form-author" name="author">
-                        </div>
-                        <div class="mb-3">
                             <label for="form-image" class="form-label">Image</label>
                             <input type="text" class="form-control" id="form-image" name="image">
                         </div>
                         <div class="mb-3">
                             <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
-                                <option value="0" selected>Rating</option>
+                                <option selected>Rating</option>
                                 <option value="⭐">⭐</option>
                                 <option value="⭐⭐">⭐⭐</option>
                                 <option value="⭐⭐⭐">⭐⭐⭐</option>
@@ -82,19 +92,24 @@
         <div class="card mb-3 col m-2 p-0 series-id" style="max-width: 540px;" data-id="{{ .Id }}">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="{{ .Image }}" class="img-fluid rounded-start series-image" alt="...">
+                    <img src="{{ .Image }}" class="rounded-start series-image" alt="{{ .Title }}">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title series-title">{{ .Title }}</h5>
-                        <p class="card-subtitle mb-2">Chapters <span class="series-chapters">{{ .Track.Chapters }}</span></p>
-                        <p class="card-subtitle mb-2">Volumes <span class="series-volumes">{{ .Track.Volumes }}</span></p>
-                        <p class="card-text">Type: <span class="series-type">{{ .Type }}</span></p>
-                        <p class="card-text">Author: <span class="series-author">{{ .Author }}</span></p>
-                        <p class="card-text">Rating: <span class="series-rating">{{ .Rating }}</span></p>
-                        <div>
-                            <button type="button" class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
-                            <button type="button" class="btn btn-primary delete-btn" data-bs-toggle="modal" data-bs-target="#form-modal">Delete</button>
+                        <div class="card-info mb-2">
+                            <p>Chapters: <span class="series-chapters">{{ .Track.Chapters }}</span></p>
+                            <p>Volumes: &nbsp;<span class="series-volumes">{{ .Track.Volumes }}</span></p>
+                        </div>
+                        <div class="card-info mb-3">
+                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-type">{{ .Type }}</span></p>
+                            <p class="card-text">Author: <span class="series-author">{{ .Author }}</span></p>
+                            <p class="card-text">Status: &nbsp;<span class="series-status">{{ .Track.Status }}</span></p>
+                            <p class="card-text">Rating: &nbsp;<span class="series-rating">{{ .Rating }}</span></p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary edit-btn col" data-bs-toggle="modal" data-bs-target="#form-modal">Edit</button>
+                            <button type="button" class="btn btn-danger delete-btn col">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -103,7 +118,7 @@
         {{ end }}
     </ul>
 
-    <script src="/static/bootstrap.bundle.min.js"></script>
     <script src="/static/script.js"></script>
+    <script src="/static/bootstrap.bundle.min.js"></script>
 </body>
 </html>

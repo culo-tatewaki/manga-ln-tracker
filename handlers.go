@@ -39,13 +39,14 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
 		Track: Track{
 			Chapters: chapters,
 			Volumes:  volumes,
+			Status:   r.FormValue("status"),
 		},
 		Author: r.FormValue("author"),
 		Image:  r.FormValue("image"),
 		Rating: r.FormValue("rating"),
 	}
 
-	// fmt.Println(series)
+	//fmt.Println(series)
 	if series.Id == -1 {
 		insertSeries(series)
 	} else {
