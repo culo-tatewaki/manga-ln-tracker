@@ -11,33 +11,46 @@
     <h1>List of Items</h1>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-form-modal">
         Launch demo modal
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="add-form-modal" tabindex="-1" aria-labelledby="add-form-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Book</h1>
+                    <h1 class="modal-title fs-5" id="add-form-modal-label">Add Book</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Add Book form -->
-                    <form id="add-form">
+                    <form id="add-form" action="/add" method="post" target="/">
                         <div class="mb-3">
-                          <label for="exampleInputEmail1" class="form-label">Email address</label>
-                          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                          <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                          <label for="add-form-series" class="form-label">Series</label>
+                          <input type="text" class="form-control" id="add-form-series" name="series">
                         </div>
                         <div class="mb-3">
-                          <label for="exampleInputPassword1" class="form-label">Password</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
+                            <label for="add-form-volume" class="form-label">Volume</label>
+                            <input type="number" class="form-control" id="add-form-volume" name="volume">
                         </div>
-                        <div class="mb-3 form-check">
-                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                          <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        <div class="mb-3">
+                            <label for="add-form-author" class="form-label">Author</label>
+                            <input type="text" class="form-control" id="add-form-author" name="author">
+                        </div>
+                        <div class="mb-3">
+                            <label for="add-form-image" class="form-label">Image</label>
+                            <input type="text" class="form-control" id="add-form-image" name="image">
+                        </div>
+                        <div class="mb-3">
+                            <select id="add-form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
+                                <option value="0" selected>Rating</option>
+                                <option value="1">⭐</option>
+                                <option value="2">⭐⭐</option>
+                                <option value="3">⭐⭐⭐</option>
+                                <option value="4">⭐⭐⭐⭐</option>
+                                <option value="5">⭐⭐⭐⭐⭐</option>
+                            </select>
                         </div>
                     </form>
                 </div>

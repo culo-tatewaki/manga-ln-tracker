@@ -10,11 +10,11 @@ import (
 var db *sql.DB
 
 type Book struct {
-	series string
-	author string
-	volume int
-	rating int
-	image  []byte
+	Series string
+	Volume int
+	Author string
+	Image  string
+	Rating int
 }
 
 func initDB() {
@@ -49,7 +49,7 @@ func insertBook(book Book) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stmt.Exec(book.series, book.volume, book.author, book.image, book.rating)
+	_, err = stmt.Exec(book.Series, book.Volume, book.Author, book.Image, book.Rating)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func getAllBooks() ([]Book, error) {
 	var books []Book
 	for rows.Next() {
 		var book Book
-		if err := rows.Scan(&book.series, &book.volume, &book.author, &book.image, &book.rating); err != nil {
+		if err := rows.Scan(&book.Series, &book.Volume, &book.Author, &book.Image, &book.Rating); err != nil {
 			return nil, err
 		}
 		books = append(books, book)
