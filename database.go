@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -55,31 +56,55 @@ func createTable() {
 }
 
 func insertSeries(series Series) {
-	stmt, err := db.Prepare("INSERT INTO Series(type, title, chapters, volumes, status, author, image, rating) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
+	query := "INSERT INTO Series(type, title, chapters, volumes, status, author, image, rating) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stmt.Exec(series.Type, series.Title, series.Track.Chapters, series.Track.Volumes, series.Track.Status, series.Author, series.Image, series.Rating)
-	if err != nil {
+
+	if _, err = stmt.Exec(
+		series.Type,
+		series.Title,
+		series.Track.Chapters,
+		series.Track.Volumes,
+		series.Track.Status,
+		series.Author,
+		series.Image,
+		series.Rating,
+	); err != nil {
 		log.Fatal(err)
 	}
+
 	stmt.Close()
 }
 
 func updateSeries(series Series) {
-	stmt, err := db.Prepare("UPDATE Series SET type = ?, title = ?, chapters = ?, volumes = ?, status = ?, author = ?, image = ?, rating = ? WHERE id = ?")
+	query := "UPDATE Series SET type = ?, title = ?, chapters = ?, volumes = ?, status = ?, author = ?, image = ?, rating = ? WHERE id = ?"
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stmt.Exec(series.Type, series.Title, series.Track.Chapters, series.Track.Volumes, series.Track.Status, series.Author, series.Image, series.Rating, series.Id)
-	if err != nil {
+
+	if _, err = stmt.Exec(
+		series.Type,
+		series.Title,
+		series.Track.Chapters,
+		series.Track.Volumes,
+		series.Track.Status,
+		series.Author,
+		series.Image,
+		series.Rating,
+		series.Id,
+	); err != nil {
 		log.Fatal(err)
 	}
+
 	stmt.Close()
 }
 
 func getAllSeries() ([]Series, error) {
-	rows, err := db.Query("SELECT id, type, title, chapters, volumes, status, author, image, rating FROM Series")
+	query := "SELECT * FROM Series"
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -88,9 +113,51 @@ func getAllSeries() ([]Series, error) {
 	var seriesList []Series
 	for rows.Next() {
 		var series Series
-		if err := rows.Scan(&series.Id, &series.Type, &series.Title, &series.Track.Chapters, &series.Track.Volumes, &series.Track.Status, &series.Author, &series.Image, &series.Rating); err != nil {
+		if err := rows.Scan(
+			&series.Id,
+			&series.Type,
+			&series.Title,
+			&series.Track.Chapters,
+			&series.Track.Volumes,
+			&series.Track.Status,
+			&series.Author,
+			&series.Image,
+			&series.Rating,
+		); err != nil {
 			return nil, err
 		}
+
+		seriesList = append(seriesList, series)
+	}
+
+	return seriesList, nil
+}
+
+func getSeriesByTitle(title string) ([]Series, error) {
+	query := fmt.Sprintf("SELECT * FROM Series WHERE title LIKE '%%%s%%'", title)
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var seriesList []Series
+	for rows.Next() {
+		var series Series
+		if err := rows.Scan(
+			&series.Id,
+			&series.Type,
+			&series.Title,
+			&series.Track.Chapters,
+			&series.Track.Volumes,
+			&series.Track.Status,
+			&series.Author,
+			&series.Image,
+			&series.Rating,
+		); err != nil {
+			return nil, err
+		}
+
 		seriesList = append(seriesList, series)
 	}
 

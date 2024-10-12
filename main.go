@@ -8,12 +8,16 @@ import (
 func main() {
 	initDB()
 
+	mux := http.NewServeMux()
+
 	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/send", sendHandler)
+	mux.HandleFunc("/", homeHandler)
+	mux.HandleFunc("/send", sendHandler)
+	mux.HandleFunc("/search", searchHandler)
 
-	println("Starting server on port :8081")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	println("Starting server on :8081...")
+	err := http.ListenAndServe(":8081", mux)
+	log.Fatal(err)
 }

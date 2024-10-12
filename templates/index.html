@@ -10,12 +10,14 @@
 <body class="d-flex flex-column justify-content-center align-items-center">
     <h1>Media Tracker</h1>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">
-        Add New Series
-    </button>
+    <div class="container d-flex flex-column gap-2 m-4">        
+        <form id="search-form" action="/search" method="post" class="d-flex w-100">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">Add New Series</button>
+    </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="form-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -24,8 +26,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Add Series form -->
-                    <form id="form" action="/send" method="post" target="/">
+                    <form id="form" action="/send" method="post">
                         <input type="number" class="form-control d-none" id="form-id" name="id" value="-1">
                         <div class="mb-3">
                             <select id="form-type" class="form-select" aria-label="type" name="type">
@@ -57,7 +58,6 @@
                                 <label for="form-chapters" class="form-label">Chapters</label>
                                 <input type="number" class="form-control" id="form-chapters" name="chapters">
                             </div>
-
                             <div>                            
                                 <label for="form-volumes" class="form-label">Volumes</label>
                                 <input type="number" class="form-control" id="form-volumes" name="volumes">
