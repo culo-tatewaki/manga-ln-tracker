@@ -27,8 +27,8 @@ func main() {
 	w := webview.New(false)
 	defer w.Destroy()
 
-	w.SetTitle("Go Server with WebView")
-	w.SetSize(800, 600, webview.HintNone)
+	w.SetTitle("Media Tracker")
+	w.SetSize(1280, 720, webview.HintNone)
 	w.Navigate("http://localhost:51234")
 
 	w.Run()

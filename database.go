@@ -159,6 +159,7 @@ func getSeriesByTitle(title string) ([]Series, error) {
 	defer rows.Close()
 
 	var seriesList []Series
+	var dateStr string
 	for rows.Next() {
 		var series Series
 		if err := rows.Scan(
@@ -168,12 +169,17 @@ func getSeriesByTitle(title string) ([]Series, error) {
 			&series.Track.Chapters,
 			&series.Track.Volumes,
 			&series.Track.Status,
-			&series.Track.LastUpdate,
+			&dateStr,
 			&series.Author,
 			&series.ReleaseDate,
 			&series.Image,
 			&series.Rating,
 		); err != nil {
+			return nil, err
+		}
+
+		series.Track.LastUpdate, err = time.Parse("2006-01-02 15:04:05", dateStr)
+		if err != nil {
 			return nil, err
 		}
 

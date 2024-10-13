@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Tracker</title>
+    <title></title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
 <body class="d-flex flex-column justify-content-center align-items-center">
-    <h1 class="mt-3">Media Tracker</h1>
-
     <div class="container d-flex flex-column gap-2 m-4">        
         <form id="search-form" action="/search" method="post" class="d-flex w-100">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
@@ -91,7 +89,7 @@
         </div>
     </div>
 
-    <ul class="d-flex justify-content-center align-items-center row row-cols-auto">
+    <ul class="container d-flex justify-content-center align-items-center row row-cols-auto">
         {{ range . }}
         <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;" data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
             <div class="row g-0">
