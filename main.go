@@ -15,6 +15,7 @@ func main() {
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/static/", staticHandler)
 	mux.HandleFunc("/send", sendHandler)
+	mux.HandleFunc("/delete", deleteHandler)
 	mux.HandleFunc("/search", searchHandler)
 
 	go func() {

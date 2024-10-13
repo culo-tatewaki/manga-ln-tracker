@@ -116,3 +116,26 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
 	tmpl.Execute(w, seriesList)
 }
+
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		w.Header().Set("Allow", http.MethodDelete)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	idParam := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	err = deleteSeriesByID(id)
+	if err != nil {
+		http.Error(w, "Error deleting item", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusFound)
+}

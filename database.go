@@ -188,3 +188,15 @@ func getSeriesByTitle(title string) ([]Series, error) {
 
 	return seriesList, nil
 }
+
+func deleteSeriesByID(id int) error {
+	query := "DELETE FROM Series WHERE id = ?"
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	return err
+}

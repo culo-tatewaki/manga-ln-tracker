@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,15 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
+
 <body class="d-flex flex-column justify-content-center align-items-center">
-    <div class="container d-flex flex-column gap-2 m-4">        
+    <div class="container d-flex flex-column gap-2 m-4">
         <form id="search-form" action="/search" method="post" class="d-flex w-100">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
             <button class="btn btn-primary" type="submit">Search</button>
         </form>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">Add New Series</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal"
+            onclick="resetForm()">Add New Series</button>
     </div>
 
     <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="form-modal-label" aria-hidden="true">
@@ -34,8 +37,8 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                          <label for="form-title" class="form-label">Title</label>
-                          <input type="text" class="form-control" id="form-title" name="title">
+                            <label for="form-title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="form-title" name="title">
                         </div>
                         <div class="mb-3">
                             <label for="form-author" class="form-label">Author</label>
@@ -56,7 +59,7 @@
                                 <label for="form-chapters" class="form-label">Chapters</label>
                                 <input type="number" class="form-control" id="form-chapters" name="chapters">
                             </div>
-                            <div>                            
+                            <div>
                                 <label for="form-volumes" class="form-label">Volumes</label>
                                 <input type="number" class="form-control" id="form-volumes" name="volumes">
                             </div>
@@ -83,6 +86,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger delete-btn" data-bs-dismiss="modal">Delete</button>
                     <button type="submit" form="form" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
                 </div>
             </div>
@@ -91,7 +95,8 @@
 
     <ul class="container d-flex justify-content-center align-items-center row row-cols-auto">
         {{ range . }}
-        <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;" data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
+        <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;"
+            data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
             <div class="row g-0">
                 <div class="col-md-4">
                     <img src="{{ .Image }}" class="rounded-start img-fluid series-image" alt="{{ .Title }}">
@@ -104,15 +109,21 @@
                             <p>Volumes: &nbsp;<span class="series-volumes">{{ .Track.Volumes }}</span></p>
                         </div>
                         <div class="card-info mb-2">
-                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="series-type">{{ .Type }}</span></p>
-                            <p class="card-text">Author: &nbsp;&nbsp;&nbsp;<span class="series-author">{{ .Author }}</span></p>
-                            <p class="card-text">Status: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-status">{{ .Track.Status }}</span></p>
-                            <p class="card-text">Rating: &nbsp;&nbsp;&nbsp;<span class="series-rating">{{ .Rating }}</span></p>
-                            <p class="card-text">Release: &nbsp;<span class="series-release-date">{{ .ReleaseDate }}</span></p>
+                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                    class="series-type">{{ .Type }}</span></p>
+                            <p class="card-text">Author: &nbsp;&nbsp;&nbsp;<span class="series-author">{{ .Author
+                                    }}</span></p>
+                            <p class="card-text">Status: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-status">{{
+                                    .Track.Status }}</span></p>
+                            <p class="card-text">Rating: &nbsp;&nbsp;&nbsp;<span class="series-rating">{{ .Rating
+                                    }}</span></p>
+                            <p class="card-text">Release: &nbsp;<span class="series-release-date">{{ .ReleaseDate
+                                    }}</span></p>
                         </div>
-                        <p class="card-text"><small class="text-muted">Last updated {{ .Track.LastUpdate.Format "2006-01-02 15:04:05" }}</small></p>
+                        <p class="card-text"><small class="text-muted">Last updated {{ .Track.LastUpdate.Format
+                                "2006-01-02 15:04:05" }}</small></p>
                     </div>
-                </div>  
+                </div>
             </div>
         </div>
         {{ end }}
@@ -121,4 +132,5 @@
     <script src="/static/script.js"></script>
     <script src="/static/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
