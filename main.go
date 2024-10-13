@@ -17,7 +17,7 @@ func main() {
 	mux.HandleFunc("/send", sendHandler)
 	mux.HandleFunc("/search", searchHandler)
 
-	log.Println("Starting server on :50001...")
-	err := http.ListenAndServe(":50001", mux)
+	log.Println("Starting server on :51234...")
+	err := http.ListenAndServe(":51234", mux)
 	log.Fatal(err)
 }

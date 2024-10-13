@@ -1,0 +1,38 @@
+{
+  "name": "manga-ln-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "build": {
+    "appId": "com.example.myapp",
+    "files": [
+      "main.js",
+      "static/**/*",
+      "templates/**/*",
+      "binaries/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "bash build.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^latest",
+    "electron-builder": "^latest"
+  }
+}
