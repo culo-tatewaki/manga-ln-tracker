@@ -113,15 +113,25 @@ func (app *Application) searchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	search := r.FormValue("search")
-	seriesList, err := app.getSeriesByTitle(search)
+	releaseDate, _ := strconv.Atoi(r.FormValue("release-date"))
+	series := Series{
+		Type:  r.FormValue("type"),
+		Title: r.FormValue("title"),
+		Track: Track{
+			Status: r.FormValue("status"),
+		},
+		ReleaseDate: releaseDate,
+		Rating:      r.FormValue("rating"),
+	}
+
+	app.InfoLog.Println("Searching Series like: ", series)
+	seriesList, err := app.getSeriesBySearch(series)
 	if err != nil {
 		app.InfoLog.Println("Error filtering Series by title")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	app.InfoLog.Printf("Searching Series with the title: %s", search)
 	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
 	tmpl.Execute(w, seriesList)
 }
@@ -136,7 +146,7 @@ func (app *Application) deleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	idParam := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(idParam)
-	if err != nil {
+	if err != nil || id < 1 {
 		app.InfoLog.Printf("Invalid ID to delete: %d", id)
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return

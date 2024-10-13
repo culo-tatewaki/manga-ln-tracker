@@ -11,10 +11,47 @@
 
 <body class="d-flex flex-column justify-content-center align-items-center">
   <div class="container d-flex flex-column gap-2 m-4">
-    <form id="search-form" action="/search" method="post" class="d-flex w-100">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
-      <button class="btn btn-primary" type="submit">Search</button>
+    <form id="search-form" action="/search" method="post" class="mb-3 d-flex gap-2">
+      <div class="w-50">
+        <label for="search-title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="search-title" name="title">
+      </div>
+      <div class="w-10">
+        <label for="search-type" class="form-label">Type</label>
+        <select id="search-type" class="form-select" aria-label="type" name="type">
+          <option selected></option>
+          <option value="Light Novel">Light Novel</option>
+          <option value="Manga">Manga</option>
+        </select>
+      </div>
+      <div class="w-10">
+        <label for="search-status" class="form-label">Status</label>
+        <select id="search-status" class="form-select" aria-label="status" name="status">
+          <option selected></option>
+          <option value="Plan to Read">Plan to Read</option>
+          <option value="Completed">Completed</option>
+          <option value="Reading">Reading</option>
+          <option value="Stalled">Stalled</option>
+          <option value="Dropped">Dropped</option>
+        </select>
+      </div>
+      <div class="w-10">
+        <label for="search-rating" class="form-label">Rating</label>
+        <select id="search-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
+          <option selected></option>
+          <option value="⭐">⭐</option>
+          <option value="⭐⭐">⭐⭐</option>
+          <option value="⭐⭐⭐">⭐⭐⭐</option>
+          <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+          <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+        </select>
+      </div>
+      <div style="width: 10%;">
+        <label for="search-release-date" class="form-label">Release Year</label>
+        <input type="number" class="form-control" id="search-release-date" name="release-date">
+      </div>
     </form>
+    <button type="submit" form="search-form" class="btn btn-success">Search</button>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">Add New Series</button>
   </div>
 
@@ -43,16 +80,6 @@
               <label for="form-author" class="form-label">Author</label>
               <input type="text" class="form-control" id="form-author" name="author">
             </div>
-            <div class="mb-3">
-              <select id="form-status" class="form-select" aria-label="status" name="status">
-                <option selected>Status</option>
-                <option value="Plan to Read">Plan to Read</option>
-                <option value="Completed">Completed</option>
-                <option value="Reading">Reading</option>
-                <option value="Stalled">Stalled</option>
-                <option value="Dropped">Dropped</option>
-              </select>
-            </div>
             <div class="mb-3 d-flex gap-2">
               <div>
                 <label for="form-chapters" class="form-label">Chapters</label>
@@ -67,19 +94,33 @@
                 <input type="number" class="form-control" id="form-release-date" name="release-date">
               </div>
             </div>
+            <div class="mb-3 d-flex gap-2">
+              <div class="w-50">
+                <label for="form-status" class="form-label">Status</label>
+                <select id="form-status" class="form-select" aria-label="status" name="status">
+                  <option selected></option>
+                  <option value="Plan to Read">Plan to Read</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Reading">Reading</option>
+                  <option value="Stalled">Stalled</option>
+                  <option value="Dropped">Dropped</option>
+                </select>
+              </div>
+              <div class="w-50">
+                <label for="form-rating" class="form-label">Rating</label>
+                <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
+                  <option selected></option>
+                  <option value="⭐">⭐</option>
+                  <option value="⭐⭐">⭐⭐</option>
+                  <option value="⭐⭐⭐">⭐⭐⭐</option>
+                  <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                  <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+                </select>
+              </div>
+            </div>
             <div class="mb-3">
               <label for="form-image" class="form-label">Image</label>
               <input type="text" class="form-control" id="form-image" name="image">
-            </div>
-            <div class="mb-3">
-              <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
-                <option selected>Rating</option>
-                <option value="⭐">⭐</option>
-                <option value="⭐⭐">⭐⭐</option>
-                <option value="⭐⭐⭐">⭐⭐⭐</option>
-                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
-                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
-              </select>
             </div>
           </form>
         </div>

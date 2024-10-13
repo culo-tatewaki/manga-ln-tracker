@@ -10,3 +10,7 @@
 .card-text .text-muted {
   float: right;
 }
+
+.w-10 {
+  width: 15%;
+}

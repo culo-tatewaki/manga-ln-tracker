@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: 'DELETE',
       });
 
-      location.reload()
+      location.href = "/"
     })
   });
 

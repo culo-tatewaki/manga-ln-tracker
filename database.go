@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -147,9 +146,32 @@ func (app *Application) getAllSeries() ([]Series, error) {
 	return seriesList, nil
 }
 
-func (app *Application) getSeriesByTitle(title string) ([]Series, error) {
-	query := fmt.Sprintf("SELECT * FROM Series WHERE title LIKE '%%%s%%'", title)
-	rows, err := app.Database.Query(query)
+func (app *Application) getSeriesBySearch(series Series) ([]Series, error) {
+	query := "SELECT * FROM Series WHERE 1=1"
+	var args []interface{}
+
+	if series.Type != "" {
+		query += " AND type = ?"
+		args = append(args, series.Type)
+	}
+	if series.Title != "" {
+		query += " AND title LIKE ?"
+		args = append(args, "%"+series.Title+"%")
+	}
+	if series.Track.Status != "" {
+		query += " AND status = ?"
+		args = append(args, series.Track.Status)
+	}
+	if series.ReleaseDate != 0 {
+		query += " AND releasedate = ?"
+		args = append(args, series.ReleaseDate)
+	}
+	if series.Rating != "" {
+		query += " AND rating = ?"
+		args = append(args, series.Rating)
+	}
+
+	rows, err := app.Database.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}

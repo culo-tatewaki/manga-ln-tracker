@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -55,7 +56,9 @@ func main() {
 
 	w.SetTitle("Media Tracker")
 	w.SetSize(1280, 720, webview.HintNone)
-	w.Navigate("http://localhost:51234")
+
+	webUrl := fmt.Sprintf("http://localhost%s", *addr)
+	w.Navigate(webUrl)
 
 	infoLog.Println("Launching WebView Window...")
 	w.Run()
