@@ -2,135 +2,127 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Tracker</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
 
 <body class="d-flex flex-column justify-content-center align-items-center">
-    <div class="container d-flex flex-column gap-2 m-4">
-        <form id="search-form" action="/search" method="post" class="d-flex w-100">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
-            <button class="btn btn-primary" type="submit">Search</button>
-        </form>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal"
-            onclick="resetForm()">Add New Series</button>
-    </div>
+  <div class="container d-flex flex-column gap-2 m-4">
+    <form id="search-form" action="/search" method="post" class="d-flex w-100">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" />
+      <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form-modal" onclick="resetForm()">Add New Series</button>
+  </div>
 
-    <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="form-modal-label" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="form-modal-label">Add Series</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="form" action="/send" method="post">
-                        <input type="number" class="form-control d-none" id="form-id" name="id" value="-1">
-                        <div class="mb-3">
-                            <select id="form-type" class="form-select" aria-label="type" name="type">
-                                <option selected>Type</option>
-                                <option value="Light Novel">Light Novel</option>
-                                <option value="Manga">Manga</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="form-title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="form-title" name="title">
-                        </div>
-                        <div class="mb-3">
-                            <label for="form-author" class="form-label">Author</label>
-                            <input type="text" class="form-control" id="form-author" name="author">
-                        </div>
-                        <div class="mb-3">
-                            <select id="form-status" class="form-select" aria-label="status" name="status">
-                                <option selected>Status</option>
-                                <option value="Plan to Read">Plan to Read</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Reading">Reading</option>
-                                <option value="Stalled">Stalled</option>
-                                <option value="Dropped">Dropped</option>
-                            </select>
-                        </div>
-                        <div class="mb-3 d-flex gap-2">
-                            <div>
-                                <label for="form-chapters" class="form-label">Chapters</label>
-                                <input type="number" class="form-control" id="form-chapters" name="chapters">
-                            </div>
-                            <div>
-                                <label for="form-volumes" class="form-label">Volumes</label>
-                                <input type="number" class="form-control" id="form-volumes" name="volumes">
-                            </div>
-                            <div>
-                                <label for="form-release-date" class="form-label">Release Date</label>
-                                <input type="number" class="form-control" id="form-release-date" name="release-date">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="form-image" class="form-label">Image</label>
-                            <input type="text" class="form-control" id="form-image" name="image">
-                        </div>
-                        <div class="mb-3">
-                            <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
-                                <option selected>Rating</option>
-                                <option value="⭐">⭐</option>
-                                <option value="⭐⭐">⭐⭐</option>
-                                <option value="⭐⭐⭐">⭐⭐⭐</option>
-                                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
-                                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger delete-btn" data-bs-dismiss="modal">Delete</button>
-                    <button type="submit" form="form" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
-                </div>
-            </div>
+  <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="form-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="form-modal-label">Add Series</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </div>
-
-    <ul class="container d-flex justify-content-center align-items-center row row-cols-auto">
-        {{ range . }}
-        <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;"
-            data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{ .Image }}" class="rounded-start img-fluid series-image" alt="{{ .Title }}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title series-title">{{ .Title }}</h5>
-                        <div class="card-info mb-2">
-                            <p>Chapters: <span class="series-chapters">{{ .Track.Chapters }}</span></p>
-                            <p>Volumes: &nbsp;<span class="series-volumes">{{ .Track.Volumes }}</span></p>
-                        </div>
-                        <div class="card-info mb-2">
-                            <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                    class="series-type">{{ .Type }}</span></p>
-                            <p class="card-text">Author: &nbsp;&nbsp;&nbsp;<span class="series-author">{{ .Author
-                                    }}</span></p>
-                            <p class="card-text">Status: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-status">{{
-                                    .Track.Status }}</span></p>
-                            <p class="card-text">Rating: &nbsp;&nbsp;&nbsp;<span class="series-rating">{{ .Rating
-                                    }}</span></p>
-                            <p class="card-text">Release: &nbsp;<span class="series-release-date">{{ .ReleaseDate
-                                    }}</span></p>
-                        </div>
-                        <p class="card-text"><small class="text-muted">Last updated {{ .Track.LastUpdate.Format
-                                "2006-01-02 15:04:05" }}</small></p>
-                    </div>
-                </div>
+        <div class="modal-body">
+          <form id="form" action="/send" method="post">
+            <input type="number" class="form-control d-none" id="form-id" name="id" value="-1">
+            <div class="mb-3">
+              <select id="form-type" class="form-select" aria-label="type" name="type">
+                <option selected>Type</option>
+                <option value="Light Novel">Light Novel</option>
+                <option value="Manga">Manga</option>
+              </select>
             </div>
+            <div class="mb-3">
+              <label for="form-title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="form-title" name="title">
+            </div>
+            <div class="mb-3">
+              <label for="form-author" class="form-label">Author</label>
+              <input type="text" class="form-control" id="form-author" name="author">
+            </div>
+            <div class="mb-3">
+              <select id="form-status" class="form-select" aria-label="status" name="status">
+                <option selected>Status</option>
+                <option value="Plan to Read">Plan to Read</option>
+                <option value="Completed">Completed</option>
+                <option value="Reading">Reading</option>
+                <option value="Stalled">Stalled</option>
+                <option value="Dropped">Dropped</option>
+              </select>
+            </div>
+            <div class="mb-3 d-flex gap-2">
+              <div>
+                <label for="form-chapters" class="form-label">Chapters</label>
+                <input type="number" class="form-control" id="form-chapters" name="chapters">
+              </div>
+              <div>
+                <label for="form-volumes" class="form-label">Volumes</label>
+                <input type="number" class="form-control" id="form-volumes" name="volumes">
+              </div>
+              <div>
+                <label for="form-release-date" class="form-label">Release Date</label>
+                <input type="number" class="form-control" id="form-release-date" name="release-date">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="form-image" class="form-label">Image</label>
+              <input type="text" class="form-control" id="form-image" name="image">
+            </div>
+            <div class="mb-3">
+              <select id="form-rating" class="form-select" aria-label="rating 1-5 stars" name="rating">
+                <option selected>Rating</option>
+                <option value="⭐">⭐</option>
+                <option value="⭐⭐">⭐⭐</option>
+                <option value="⭐⭐⭐">⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+              </select>
+            </div>
+          </form>
         </div>
-        {{ end }}
-    </ul>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger delete-btn" data-bs-dismiss="modal">Delete</button>
+          <button type="submit" form="form" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script src="/static/script.js"></script>
-    <script src="/static/bootstrap.bundle.min.js"></script>
+  <ul class="container d-flex justify-content-center align-items-center row row-cols-auto">
+    {{ range . }}
+    <div type="button" class="card mb-3 col m-2 p-0 series-id edit-btn" style="max-width: 540px;" data-id="{{ .Id }}" data-bs-toggle="modal" data-bs-target="#form-modal">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ .Image }}" class="rounded-start img-fluid series-image" alt="{{ .Title }}">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title series-title">{{ .Title }}</h5>
+            <div class="card-info mb-2">
+              <p>Chapters: <span class="series-chapters">{{ .Track.Chapters }}</span></p>
+              <p>Volumes: &nbsp;<span class="series-volumes">{{ .Track.Volumes }}</span></p>
+            </div>
+            <div class="card-info mb-2">
+              <p class="card-text">Type: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="series-type">{{ .Type }}</span></p>
+              <p class="card-text">Author: &nbsp;&nbsp;&nbsp;<span class="series-author">{{ .Author }}</span></p>
+              <p class="card-text">Status: &nbsp;&nbsp;&nbsp;&nbsp;<span class="series-status">{{.Track.Status }}</span></p>
+              <p class="card-text">Rating: &nbsp;&nbsp;&nbsp;<span class="series-rating">{{ .Rating }}</span></p>
+              <p class="card-text">Release: &nbsp;<span class="series-release-date">{{ .ReleaseDate }}</span></p>
+            </div>
+            <p class="card-text"><small class="text-muted">Last updated {{ .Track.LastUpdate.Format "2006-01-02 15:04:05" }}</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ end }}
+  </ul>
+
+  <script src="/static/script.js"></script>
+  <script src="/static/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

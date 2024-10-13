@@ -21,12 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   [...document.getElementsByClassName("delete-btn")].forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const id = document.getElementById("form-id").value
-
-      fetch(`/delete?id=${id}`, {
+      await fetch(`/delete?id=${id}`, {
         method: 'DELETE',
       });
+
+      location.reload()
     })
   });
 

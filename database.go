@@ -3,13 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
-
-var db *sql.DB
 
 type Track struct {
 	Chapters   int
@@ -29,17 +26,17 @@ type Series struct {
 	Rating      string
 }
 
-func initDB() {
+func (app *Application) initDB() {
 	var err error
-	db, err = sql.Open("sqlite3", "my_database.db")
+	app.Database, err = sql.Open("sqlite3", "my_database.db")
 	if err != nil {
-		log.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
 
-	createTable()
+	app.createTable()
 }
 
-func createTable() {
+func (app *Application) createTable() {
 	sqlStmt := `
     CREATE TABLE IF NOT EXISTS Series (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,17 +51,17 @@ func createTable() {
 		image TEXT NOT NULL,
 		rating INTEGER NOT NULL
     );`
-	_, err := db.Exec(sqlStmt)
+	_, err := app.Database.Exec(sqlStmt)
 	if err != nil {
-		log.Fatalf("%q: %s", err, sqlStmt)
+		app.ErrorLog.Fatalf("%q: %s", err, sqlStmt)
 	}
 }
 
-func insertSeries(series Series) {
+func (app *Application) insertSeries(series Series) {
 	query := "INSERT INTO Series(type, title, chapters, volumes, status, lastupdate, author, releasedate, image, rating) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := db.Prepare(query)
+	stmt, err := app.Database.Prepare(query)
 	if err != nil {
-		log.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
 
 	if _, err = stmt.Exec(
@@ -79,17 +76,17 @@ func insertSeries(series Series) {
 		series.Image,
 		series.Rating,
 	); err != nil {
-		log.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
 
 	stmt.Close()
 }
 
-func updateSeries(series Series) {
+func (app *Application) updateSeries(series Series) {
 	query := "UPDATE Series SET type = ?, title = ?, chapters = ?, volumes = ?, status = ?, lastupdate = ?, author = ?, releasedate = ?, image = ?, rating = ? WHERE id = ?"
-	stmt, err := db.Prepare(query)
+	stmt, err := app.Database.Prepare(query)
 	if err != nil {
-		log.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
 
 	if _, err = stmt.Exec(
@@ -105,15 +102,15 @@ func updateSeries(series Series) {
 		series.Rating,
 		series.Id,
 	); err != nil {
-		log.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
 
 	stmt.Close()
 }
 
-func getAllSeries() ([]Series, error) {
+func (app *Application) getAllSeries() ([]Series, error) {
 	query := "SELECT * FROM Series"
-	rows, err := db.Query(query)
+	rows, err := app.Database.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -150,9 +147,9 @@ func getAllSeries() ([]Series, error) {
 	return seriesList, nil
 }
 
-func getSeriesByTitle(title string) ([]Series, error) {
+func (app *Application) getSeriesByTitle(title string) ([]Series, error) {
 	query := fmt.Sprintf("SELECT * FROM Series WHERE title LIKE '%%%s%%'", title)
-	rows, err := db.Query(query)
+	rows, err := app.Database.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -189,9 +186,9 @@ func getSeriesByTitle(title string) ([]Series, error) {
 	return seriesList, nil
 }
 
-func deleteSeriesByID(id int) error {
+func (app *Application) deleteSeriesByID(id int) error {
 	query := "DELETE FROM Series WHERE id = ?"
-	stmt, err := db.Prepare(query)
+	stmt, err := app.Database.Prepare(query)
 	if err != nil {
 		return err
 	}
