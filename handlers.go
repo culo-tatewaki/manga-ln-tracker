@@ -1,11 +1,18 @@
 package main
 
 import (
+	"embed"
 	"html/template"
 	"net/http"
 	"strconv"
 	"time"
 )
+
+//go:embed static/*
+var staticFiles embed.FS
+
+//go:embed templates/*
+var templateFiles embed.FS
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -19,8 +26,29 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
 	tmpl.Execute(w, seriesList)
+}
+
+func staticHandler(w http.ResponseWriter, r *http.Request) {
+	filePath := r.URL.Path[len("/static/"):]
+	data, err := staticFiles.ReadFile("static/" + filePath)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Set content type based on file extension
+	switch {
+	case filePath[len(filePath)-4:] == ".css":
+		w.Header().Set("Content-Type", "text/css")
+	case filePath[len(filePath)-3:] == ".js":
+		w.Header().Set("Content-Type", "application/javascript")
+	default:
+		w.Header().Set("Content-Type", "application/octet-stream")
+	}
+
+	w.Write(data)
 }
 
 func sendHandler(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +113,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
 	tmpl.Execute(w, seriesList)
 }
