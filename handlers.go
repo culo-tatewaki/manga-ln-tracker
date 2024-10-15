@@ -1,101 +1,98 @@
 package main
 
 import (
-	"embed"
-	"html/template"
+	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
-	"time"
 )
 
-//go:embed static/*
-var staticFiles embed.FS
+func (app *Application) addHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.InfoLog.Printf("Tried to access /add with method: %s", r.Method)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-//go:embed templates/*
-var templateFiles embed.FS
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.InfoLog.Println("Failed to read the /add request body")
+		http.Error(w, "Error reading request body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
 
-func (app *Application) homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.InfoLog.Printf("Tried to access to an invalid path: %s", r.URL.Path)
-		http.NotFound(w, r)
+	var series Series
+	err = json.Unmarshal(body, &series)
+	if err != nil {
+		app.InfoLog.Println("Failed to parse the /add request body into a go object")
+		http.Error(w, "Error unmarshaling JSON", http.StatusBadRequest)
+		return
+	}
+
+	id, err := app.insertSeries(series)
+	series.Id = id
+	app.InfoLog.Println("Adding Series: ", series)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(series)
+}
+
+func (app *Application) updateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		w.Header().Set("Allow", http.MethodPut)
+		app.InfoLog.Printf("Tried to access /update with method: %s", r.Method)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.InfoLog.Println("Failed to read the /update request body")
+		http.Error(w, "Error reading request body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	var series Series
+	err = json.Unmarshal(body, &series)
+	if err != nil {
+		app.InfoLog.Println("Failed to parse the /update request body into a go object")
+		http.Error(w, "Error unmarshaling JSON", http.StatusBadRequest)
+		return
+	}
+
+	app.InfoLog.Println("updating Series: ", series)
+	app.updateSeries(series)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(series)
+}
+
+func (app *Application) getAllHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		app.InfoLog.Printf("Tried to access /getall with method: %s", r.Method)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	seriesList, err := app.getAllSeries()
 	if err != nil {
-		app.InfoLog.Printf("/ failed to get the series")
+		app.InfoLog.Println("Error getting all series")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
-	tmpl.Execute(w, seriesList)
-}
-
-func (app *Application) staticHandler(w http.ResponseWriter, r *http.Request) {
-	filePath := r.URL.Path[len("/static/"):]
-	data, err := staticFiles.ReadFile("static/" + filePath)
-	if err != nil {
-		app.InfoLog.Printf("static file not found: %s", filePath)
-		http.NotFound(w, r)
-		return
-	}
-
-	switch {
-	case filePath[len(filePath)-4:] == ".css":
-		w.Header().Set("Content-Type", "text/css")
-	case filePath[len(filePath)-3:] == ".js":
-		w.Header().Set("Content-Type", "application/javascript")
-	default:
-		w.Header().Set("Content-Type", "application/octet-stream")
-	}
-
-	w.Write(data)
-}
-
-func (app *Application) sendHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		app.InfoLog.Printf("Tried to access /send with method: %s", r.Method)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	err := r.ParseForm()
-	if err != nil {
-		app.InfoLog.Printf("Error parsing form data")
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
-		return
-	}
-
-	chapters, _ := strconv.Atoi(r.FormValue("chapters"))
-	volumes, _ := strconv.Atoi(r.FormValue("volumes"))
-	id, _ := strconv.Atoi(r.FormValue("id"))
-	releaseDate, _ := strconv.Atoi(r.FormValue("release-date"))
-	series := Series{
-		Id:    id,
-		Type:  r.FormValue("type"),
-		Title: r.FormValue("title"),
-		Track: Track{
-			Chapters:   chapters,
-			Volumes:    volumes,
-			Status:     r.FormValue("status"),
-			LastUpdate: time.Now(),
-		},
-		Author:      r.FormValue("author"),
-		ReleaseDate: releaseDate,
-		Image:       r.FormValue("image"),
-		Rating:      r.FormValue("rating"),
-	}
-
-	app.InfoLog.Println("New Series: ", series)
-	if series.Id == -1 {
-		app.insertSeries(series)
-	} else {
-		app.updateSeries(series)
-	}
-
-	http.Redirect(w, r, "/", http.StatusFound)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(seriesList)
 }
 
 func (app *Application) searchHandler(w http.ResponseWriter, r *http.Request) {
@@ -106,22 +103,20 @@ func (app *Application) searchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseForm()
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		app.InfoLog.Println("Error parsing form data")
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		app.InfoLog.Println("Failed to read the /search request body")
+		http.Error(w, "Error reading request body", http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
 
-	releaseDate, _ := strconv.Atoi(r.FormValue("release-date"))
-	series := Series{
-		Type:  r.FormValue("type"),
-		Title: r.FormValue("title"),
-		Track: Track{
-			Status: r.FormValue("status"),
-		},
-		ReleaseDate: releaseDate,
-		Rating:      r.FormValue("rating"),
+	var series Series
+	err = json.Unmarshal(body, &series)
+	if err != nil {
+		app.InfoLog.Println("Failed to parse the /search request body into a go object")
+		http.Error(w, "Error unmarshaling JSON", http.StatusBadRequest)
+		return
 	}
 
 	app.InfoLog.Println("Searching Series like: ", series)
@@ -132,8 +127,9 @@ func (app *Application) searchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := template.Must(template.ParseFS(templateFiles, "templates/index.html"))
-	tmpl.Execute(w, seriesList)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(seriesList)
 }
 
 func (app *Application) deleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -160,4 +156,5 @@ func (app *Application) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.InfoLog.Printf("Deleted Series with the ID: %d", id)
+	w.WriteHeader(http.StatusNoContent)
 }

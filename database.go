@@ -8,21 +8,21 @@ import (
 )
 
 type Track struct {
-	Chapters   int
-	Volumes    int
-	Status     string
-	LastUpdate time.Time
+	Chapters   int       `json:"chapters"`
+	Volumes    int       `json:"volumes"`
+	Status     string    `json:"status"`
+	LastUpdate time.Time `json:"lastUpdate"`
 }
 
 type Series struct {
-	Id          int
-	Type        string
-	Title       string
-	Track       Track
-	Author      string
-	ReleaseDate int
-	Image       string
-	Rating      string
+	Id          int64  `json:"id"`
+	Type        string `json:"type"`
+	Title       string `json:"title"`
+	Track       Track  `json:"track"`
+	Author      string `json:"author"`
+	ReleaseDate int    `json:"releaseDate"`
+	Image       string `json:"image"`
+	Rating      string `json:"rating"`
 }
 
 func (app *Application) initDB() {
@@ -56,14 +56,16 @@ func (app *Application) createTable() {
 	}
 }
 
-func (app *Application) insertSeries(series Series) {
+func (app *Application) insertSeries(series Series) (int64, error) {
 	query := "INSERT INTO Series(type, title, chapters, volumes, status, lastupdate, author, releasedate, image, rating) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := app.Database.Prepare(query)
 	if err != nil {
 		app.ErrorLog.Fatal(err)
+		return 0, err
 	}
+	defer stmt.Close()
 
-	if _, err = stmt.Exec(
+	result, err := stmt.Exec(
 		series.Type,
 		series.Title,
 		series.Track.Chapters,
@@ -74,11 +76,19 @@ func (app *Application) insertSeries(series Series) {
 		series.ReleaseDate,
 		series.Image,
 		series.Rating,
-	); err != nil {
+	)
+	if err != nil {
 		app.ErrorLog.Fatal(err)
+		return 0, err
 	}
 
-	stmt.Close()
+	id, err := result.LastInsertId()
+	if err != nil {
+		app.ErrorLog.Fatal(err)
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func (app *Application) updateSeries(series Series) {
@@ -115,7 +125,7 @@ func (app *Application) getAllSeries() ([]Series, error) {
 	}
 	defer rows.Close()
 
-	var seriesList []Series
+	var seriesList []Series = []Series{}
 	for rows.Next() {
 		var series Series
 		var dateStr string
@@ -177,7 +187,7 @@ func (app *Application) getSeriesBySearch(series Series) ([]Series, error) {
 	}
 	defer rows.Close()
 
-	var seriesList []Series
+	var seriesList []Series = []Series{}
 	var dateStr string
 	for rows.Next() {
 		var series Series

@@ -3,12 +3,9 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-
-	webview "github.com/webview/webview_go"
 )
 
 type Application struct {
@@ -33,11 +30,15 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", app.homeHandler)
-	mux.HandleFunc("/static/", app.staticHandler)
-	mux.HandleFunc("/send", app.sendHandler)
+	staticDir := "./static"
+	fileServer := http.FileServer(http.Dir(staticDir))
+
+	mux.Handle("/", http.StripPrefix("/", fileServer))
+	mux.HandleFunc("/add", app.addHandler)
+	mux.HandleFunc("/update", app.updateHandler)
 	mux.HandleFunc("/delete", app.deleteHandler)
 	mux.HandleFunc("/search", app.searchHandler)
+	mux.HandleFunc("/getall", app.getAllHandler)
 
 	srv := &http.Server{
 		Addr:     *addr,
@@ -45,21 +46,7 @@ func main() {
 		Handler:  mux,
 	}
 
-	go func() {
-		infoLog.Printf("Starting server on %s...", *addr)
-		err := srv.ListenAndServe()
-		errorLog.Fatal(err)
-	}()
-
-	w := webview.New(false)
-	defer w.Destroy()
-
-	w.SetTitle("Media Tracker")
-	w.SetSize(1280, 720, webview.HintNone)
-
-	webUrl := fmt.Sprintf("http://localhost%s", *addr)
-	w.Navigate(webUrl)
-
-	infoLog.Println("Launching WebView Window...")
-	w.Run()
+	infoLog.Printf("Starting server on %s...", *addr)
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
